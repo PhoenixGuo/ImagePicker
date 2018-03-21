@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--不透明度16进制百分比 -->
+    <!-- 100% — FF 完全不透明-->
+    <!-- 90% — E6 -->
+    <!-- 80% — CC -->
+    <!-- 70% — B3 -->
+    <!-- 60% — 99 -->
+    <!-- 50% — 80 -->
+    <!-- 40% — 66 -->
+    <!-- 30% — 4D -->
+    <!-- 20% — 33 -->
+    <!-- 10% — 1A -->
+    <!-- 0% — 00 完全透明-->
+
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="blue_light">#00B7F1</color>
+
+    <color name="gray_super_light_alpha_20">#33EFEFEF</color>
+    <color name="gray_very_little_light_alpha_60">#99818181</color>
+
+</resources>

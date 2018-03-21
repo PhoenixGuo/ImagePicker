@@ -1,0 +1,36 @@
+<resources>
+
+    <!-- Default Spacings -->
+    <dimen name="super_very_small_spacing">2dp</dimen>
+    <dimen name="super_small_spacing">4dp</dimen>
+    <dimen name="very_small_spacing">8dp</dimen>
+    <dimen name="small_spacing">12dp</dimen>
+    <dimen name="little_medium_spacing">14dp</dimen>
+    <dimen name="medium_spacing">16dp</dimen>
+    <dimen name="large_spacing">20dp</dimen>
+    <dimen name="very_large_spacing">24dp</dimen>
+    <dimen name="super_large_spacing">32dp</dimen>
+    <dimen name="super_very_large_spacing">48dp</dimen>
+
+    <!-- Avatar -->
+    <dimen name="avatar_super_very_small_size">24dp</dimen>
+    <dimen name="avatar_super_small_size">32dp</dimen>
+    <dimen name="avatar_very_small_size">48dp</dimen>
+    <dimen name="avatar_small_size">64dp</dimen>
+    <dimen name="avatar_medium_size">72dp</dimen>
+    <dimen name="avatar_large_size">96dp</dimen>
+    <dimen name="avatar_very_large_size">128dp</dimen>
+
+    <!-- Font Size -->
+    <dimen name="font_super_small_size">8sp</dimen>
+    <dimen name="font_very_small_size">12sp</dimen>
+    <dimen name="font_small_size">14sp</dimen>
+    <dimen name="font_medium_size">16sp</dimen>
+    <dimen name="font_large_size">18sp</dimen>
+    <dimen name="font_very_large_size">20sp</dimen>
+    <dimen name="font_super_large_size">25sp</dimen>
+    <dimen name="font_super_very_large_size">50sp</dimen>
+
+    <dimen name="title_bar_height">48dp</dimen>
+
+</resources>

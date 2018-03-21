@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">ImagePicker</string>
+    <string name="picked_images_count">Picked images count:</string>
+    <string name="jump_to_image_picker">Jump to image picker</string>
+</resources>

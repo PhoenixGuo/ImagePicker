@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ImagePicker</string>
+    <string name="picked_images_count">选中图片张数：</string>
+    <string name="jump_to_image_picker">跳转到图片选择器</string>
+</resources>
