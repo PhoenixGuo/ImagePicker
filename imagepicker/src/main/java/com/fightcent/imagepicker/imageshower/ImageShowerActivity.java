@@ -33,6 +33,9 @@ public class ImageShowerActivity extends AppCompatActivity {
     public static final String ALL_IMAGE_BEAN_LIST = "ALL_IMAGE_BEAN_LIST";
     private ArrayList<ImageBean> mAllImageBeanList = new ArrayList<>();
 
+    public static final String INIT_SHOW_POSITION = "INIT_SHOW_POSITION";
+    private int mInitShowPosition;
+
     private boolean mIsShowToolBar = true;
     private ImageShowerAdapter mImageShowerAdapter;
 
@@ -53,8 +56,7 @@ public class ImageShowerActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         if (intent != null) {
-/*            ArrayList<ImageBean> imageBeenList
-                    = (ArrayList<ImageBean>) intent.getSerializableExtra(ALL_IMAGE_BEAN_LIST);*/
+            mInitShowPosition = intent.getIntExtra(INIT_SHOW_POSITION, 0);
         }
 
         initViews();
@@ -66,7 +68,12 @@ public class ImageShowerActivity extends AppCompatActivity {
         mActivityImageShowerBinding.vp.setAdapter(
                 mImageShowerAdapter
         );
-        setPositionSizeText(1);
+        mActivityImageShowerBinding.vp.setCurrentItem(mInitShowPosition);
+        setPositionSizeText(mInitShowPosition + 1);
+
+        if (ImagePickerActivity.mAllImageBeanList.get(mInitShowPosition).isIsPicked()) {
+            mActivityImageShowerBinding.ivPick.setSelected(true);
+        }
     }
 
     private void initListeners() {
@@ -88,6 +95,7 @@ public class ImageShowerActivity extends AppCompatActivity {
 
                     @Override
                     public void onPageSelected(int position) {
+                        mInitShowPosition = position;
                         setPositionSizeText(position + 1);
                         if (ImagePickerActivity.mAllImageBeanList.get(position).isIsPicked()) {
                             mActivityImageShowerBinding.ivPick.setSelected(true);
@@ -109,8 +117,13 @@ public class ImageShowerActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         if (mActivityImageShowerBinding.ivPick.isSelected()) {
                             mActivityImageShowerBinding.ivPick.setSelected(false);
+                            //TODO 图片取消选中，怎么把选中的值返回过去
+
+
                         } else {
                             mActivityImageShowerBinding.ivPick.setSelected(true);
+                            //TODO 图片选中之后的处理
+
 
                         }
                     }

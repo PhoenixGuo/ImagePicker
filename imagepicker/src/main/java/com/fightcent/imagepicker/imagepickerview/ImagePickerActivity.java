@@ -226,8 +226,9 @@ public class ImagePickerActivity extends AppCompatActivity implements ImagePicke
     }
 
     @Override
-    public void startImageShowerView() {
+    public void startImageShowerView(int clickItem) {
         Intent intent = new Intent(this, ImageShowerActivity.class);
+        intent.putExtra(ImageShowerActivity.INIT_SHOW_POSITION, clickItem);
         startActivity(intent);
     }
 
