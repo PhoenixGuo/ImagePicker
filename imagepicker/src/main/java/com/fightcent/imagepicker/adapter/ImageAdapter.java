@@ -6,7 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.fightcent.imagepicker.ImagePickerView;
+import com.fightcent.imagepicker.imagepickerview.ImagePickerView;
 import com.fightcent.imagepicker.R;
 import com.fightcent.imagepicker.model.ImageBean;
 import com.fightcent.imagepicker.util.CollectionUtil;

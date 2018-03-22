@@ -6,8 +6,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.bumptech.glide.Glide;
-import com.fightcent.imagepicker.ImagePickerView;
 import com.fightcent.imagepicker.databinding.ItemImageThumbnailBinding;
+import com.fightcent.imagepicker.imagepickerview.ImagePickerView;
 import com.fightcent.imagepicker.model.ImageBean;
 import com.fightcent.imagepicker.util.SystemUtil;
 
@@ -85,7 +85,7 @@ public class ImageViewHolder extends RecyclerView.ViewHolder {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        mImagePickerView.startImageShowerView();
                     }
                 }
         );

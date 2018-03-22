@@ -1,9 +1,11 @@
-package com.fightcent.imagepicker;
+package com.fightcent.imagepicker.widget;
 
 import android.content.Context;
 import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+
+import com.fightcent.imagepicker.R;
 
 /**
  * Created by andy.guo on 2018/1/19.

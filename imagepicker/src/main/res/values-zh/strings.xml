@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="double_click_to_top">双击此处回到最顶部</string>
-    <string name="conform">确定(%1$d/%2$d)</string>
+    <string name="conform_count">确定(%1$d/%2$d)</string>
+    <string name="conform">确定</string>
+    <string name="position_size">%1$d/%2$d</string>
     <string name="album">相册</string>
     <string name="preview">预览</string>
     <string name="can_not_pick_more_image">已达到最大选择张数</string>

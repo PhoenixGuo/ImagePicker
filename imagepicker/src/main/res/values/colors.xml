@@ -23,4 +23,6 @@
     <color name="gray_super_light_alpha_20">#33EFEFEF</color>
     <color name="gray_very_little_light_alpha_60">#99818181</color>
 
+    <color name="gray_very_little_light">#818181</color>
+
 </resources>

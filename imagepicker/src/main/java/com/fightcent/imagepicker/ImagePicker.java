@@ -3,6 +3,8 @@ package com.fightcent.imagepicker;
 import android.content.Context;
 import android.content.Intent;
 
+import com.fightcent.imagepicker.imagepickerview.ImagePickerActivity;
+
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.Serializable;

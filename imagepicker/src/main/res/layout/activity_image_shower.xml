@@ -3,11 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/black"
-        android:orientation="vertical">
+        android:fitsSystemWindows="true"
+        android:background="@android:color/black">
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/vp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/tb_top"
@@ -30,56 +35,45 @@
                     android:src="@drawable/ic_arrow_back_white_32dp" />
 
                 <TextView
-                    android:id="@+id/tv_double_click_to_top"
+                    android:id="@+id/tv_position_size"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_centerVertical="true"
-                    android:layout_toLeftOf="@+id/tv_conform"
                     android:layout_toRightOf="@+id/iv_back_arrow"
                     android:ellipsize="end"
                     android:gravity="center_vertical"
+                    android:layout_centerVertical="true"
                     android:lines="1"
                     android:paddingBottom="@dimen/very_small_spacing"
                     android:paddingTop="@dimen/very_small_spacing"
-                    android:text="@string/double_click_to_top"
                     android:textColor="@android:color/white"
                     android:textSize="@dimen/font_large_size"
-                    android:visibility="gone"
-                    tools:visibility="visible" />
+                    tools:text="3/12" />
 
                 <TextView
                     android:id="@+id/tv_conform"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
+                    android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:gravity="center"
-                    android:lines="1"
                     android:paddingBottom="@dimen/very_small_spacing"
                     android:paddingLeft="@dimen/little_medium_spacing"
                     android:paddingRight="@dimen/little_medium_spacing"
                     android:paddingTop="@dimen/very_small_spacing"
-                    android:text="@string/double_click_to_top"
+                    android:text="@string/conform"
                     android:textColor="@android:color/white"
-                    android:textSize="@dimen/font_large_size"
-                    tools:text="确认(99999/100000)" />
+                    android:textSize="@dimen/font_large_size" />
 
             </RelativeLayout>
 
         </android.support.v7.widget.Toolbar>
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rv_pictures"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:padding="@dimen/super_very_small_spacing"
-            android:scrollbars="vertical" />
-
         <android.support.v7.widget.Toolbar
             android:id="@+id/tb_bottom"
             android:layout_width="match_parent"
             android:layout_height="@dimen/title_bar_height"
+            android:layout_alignParentBottom="true"
             android:background="@color/gray_very_little_light"
             app:contentInsetLeft="0dp"
             app:contentInsetStart="0dp">
@@ -88,40 +82,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <TextView
-                    android:id="@+id/tv_album"
+                <ImageView
+                    android:id="@+id/iv_pick"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:ellipsize="end"
-                    android:gravity="center_vertical"
-                    android:lines="1"
-                    android:paddingBottom="@dimen/very_small_spacing"
-                    android:paddingLeft="@dimen/little_medium_spacing"
-                    android:paddingRight="@dimen/little_medium_spacing"
-                    android:paddingTop="@dimen/very_small_spacing"
-                    android:text="@string/album"
-                    android:textColor="@android:color/white"
-                    android:textSize="@dimen/font_large_size" />
-
-                <TextView
-                    android:id="@+id/tv_preview"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
-                    android:ellipsize="end"
-                    android:gravity="center_vertical"
-                    android:lines="1"
-                    android:paddingBottom="@dimen/very_small_spacing"
-                    android:paddingLeft="@dimen/little_medium_spacing"
-                    android:paddingRight="@dimen/little_medium_spacing"
-                    android:paddingTop="@dimen/very_small_spacing"
-                    android:text="@string/preview"
-                    android:textColor="@android:color/white"
-                    android:textSize="@dimen/font_large_size" />
+                    android:layout_centerVertical="true"
+                    android:padding="@dimen/small_spacing"
+                    android:src="@drawable/picker_pick_box" />
 
             </RelativeLayout>
         </android.support.v7.widget.Toolbar>
 
-    </LinearLayout>
+    </RelativeLayout>
 </layout>

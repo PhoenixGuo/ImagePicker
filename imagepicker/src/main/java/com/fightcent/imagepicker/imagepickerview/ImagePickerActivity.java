@@ -1,19 +1,20 @@
-package com.fightcent.imagepicker;
+package com.fightcent.imagepicker.imagepickerview;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
 
+import com.fightcent.imagepicker.R;
 import com.fightcent.imagepicker.adapter.ImageAdapter;
 import com.fightcent.imagepicker.controller.ConfigConstantController;
 import com.fightcent.imagepicker.databinding.ActivityImagePickerBinding;
+import com.fightcent.imagepicker.imageshower.ImageShowerActivity;
 import com.fightcent.imagepicker.model.ImageBean;
 import com.fightcent.imagepicker.model.ImageBeanFactory;
 import com.fightcent.imagepicker.model.OnImagePickedEvent;
@@ -21,6 +22,7 @@ import com.fightcent.imagepicker.model.OnImagePickerActivityDestroyEvent;
 import com.fightcent.imagepicker.util.CollectionUtil;
 import com.fightcent.imagepicker.util.ToastUtil;
 import com.fightcent.imagepicker.util.ViewUtil;
+import com.fightcent.imagepicker.widget.ItemThumbnailDecoration;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -37,16 +39,20 @@ import rx.schedulers.Schedulers;
  * Created by andy.guo on 2018/1/19.
  */
 
-public class ImagePickerActivity extends Activity implements ImagePickerView {
+public class ImagePickerActivity extends AppCompatActivity implements ImagePickerView {
 
     private ActivityImagePickerBinding mActivityImagePickerBinding;
 
     private GridLayoutManager mGridLayoutManager;
     private ImageAdapter mImageAdapter;
-    private static final String ORDER_BY = MediaStore.Images.Media._ID + " DESC";
+    public static final String ORDER_BY = MediaStore.Images.Media._ID + " DESC";
+
+    //TODO 待优化
+    public static ArrayList<ImageBean> mAllImageBeanList = new ArrayList<>();
 
     private ArrayList<ImageBean> mPickedImageList = new ArrayList<>();
-    private static final String SAVE_INSTANCE_SELECTED_IMAGE_LIST = "SAVE_INSTANCE_SELECTED_IMAGE_LIST";
+    private static final String SAVE_INSTANCE_SELECTED_IMAGE_LIST
+            = "SAVE_INSTANCE_SELECTED_IMAGE_LIST";
 
     public static final String COLUMN_COUNT = "COLUMN_COUNT";
     private int mColumnCount;
@@ -58,13 +64,13 @@ public class ImagePickerActivity extends Activity implements ImagePickerView {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        View view = LayoutInflater.from(this).inflate(
-                R.layout.activity_image_picker,
-                null
-        );
-        setContentView(view);
-        mActivityImagePickerBinding = DataBindingUtil.bind(
-                view
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
+
+        mActivityImagePickerBinding = DataBindingUtil.setContentView(
+                this,
+                R.layout.activity_image_picker
         );
 
         Intent intent = getIntent();
@@ -116,16 +122,16 @@ public class ImagePickerActivity extends Activity implements ImagePickerView {
                 new Func1<Cursor, List<ImageBean>>() {
                     @Override
                     public List<ImageBean> call(Cursor cursor) {
-                        List<ImageBean> imageList = new ArrayList<>();
+                        mAllImageBeanList.clear();
                         while (cursor.moveToNext()) {
                             ImageBean imageBean = ImageBeanFactory.createImageBeanByCursor(cursor);
                             if (!CollectionUtil.isEmpty(mPickedImageList)
                                     && mPickedImageList.contains(imageBean)) {
                                 imageBean.setIsPicked(true);
                             }
-                            imageList.add(imageBean);
+                            mAllImageBeanList.add(imageBean);
                         }
-                        return imageList;
+                        return mAllImageBeanList;
                     }
                 }
         ).subscribe(
@@ -178,6 +184,7 @@ public class ImagePickerActivity extends Activity implements ImagePickerView {
                     }
                 }
         );
+
     }
 
     @Override
@@ -206,7 +213,7 @@ public class ImagePickerActivity extends Activity implements ImagePickerView {
     private void setConformButtonText() {
         mActivityImagePickerBinding.tvConform.setText(
                 String.format(
-                        getResources().getString(R.string.conform),
+                        getResources().getString(R.string.conform_count),
                         CollectionUtil.size(mPickedImageList),
                         mMaxImagePickCount
                 )
@@ -216,6 +223,12 @@ public class ImagePickerActivity extends Activity implements ImagePickerView {
     @Override
     public int getColumnCount() {
         return mColumnCount;
+    }
+
+    @Override
+    public void startImageShowerView() {
+        Intent intent = new Intent(this, ImageShowerActivity.class);
+        startActivity(intent);
     }
 
     @Override

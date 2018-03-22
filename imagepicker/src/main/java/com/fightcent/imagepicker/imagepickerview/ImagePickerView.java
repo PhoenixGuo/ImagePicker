@@ -1,4 +1,4 @@
-package com.fightcent.imagepicker;
+package com.fightcent.imagepicker.imagepickerview;
 
 import com.fightcent.imagepicker.model.ImageBean;
 
@@ -13,5 +13,7 @@ public interface ImagePickerView {
     boolean imagePick(ImageBean imageBean);
 
     int getColumnCount();
+
+    void startImageShowerView();
 
 }
