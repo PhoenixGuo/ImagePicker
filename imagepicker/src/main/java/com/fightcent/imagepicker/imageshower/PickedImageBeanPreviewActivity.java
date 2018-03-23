@@ -9,7 +9,7 @@ import com.fightcent.imagepicker.ImagePicker;
  * Created by andy.guo on 2018/3/23.
  */
 
-public class ImagePreviewActivity extends BaseImageShowerActivity {
+public class PickedImageBeanPreviewActivity extends BaseImagePreviewActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

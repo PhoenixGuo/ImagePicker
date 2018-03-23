@@ -85,7 +85,7 @@ public class ImageViewHolder extends RecyclerView.ViewHolder {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mImagePickerView.startImageShowerView(getLayoutPosition());
+                        mImagePickerView.startAllImageBeanView(getLayoutPosition());
                     }
                 }
         );

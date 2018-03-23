@@ -19,11 +19,11 @@
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".imageshower.ImageShowerActivity"
+            android:name=".imageshower.AllImageBeanPreviewActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".imageshower.ImagePreviewActivity"
+            android:name=".imageshower.PickedImageBeanPreviewActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
             android:screenOrientation="portrait" />
     </application>

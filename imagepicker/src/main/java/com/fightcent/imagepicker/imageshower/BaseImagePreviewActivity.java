@@ -32,7 +32,7 @@ import java.util.ArrayList;
  * Created by andy.guo on 2018/3/23.
  */
 
-public abstract class BaseImageShowerActivity extends BaseActivity {
+public abstract class BaseImagePreviewActivity extends BaseActivity {
 
     protected ActivityImageShowerBinding mActivityImageShowerBinding;
 
@@ -101,7 +101,7 @@ public abstract class BaseImageShowerActivity extends BaseActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        BaseImageShowerActivity.this.finish();
+                        BaseImagePreviewActivity.this.finish();
                     }
                 }
         );

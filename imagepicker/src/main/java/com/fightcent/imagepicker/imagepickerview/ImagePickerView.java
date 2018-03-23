@@ -14,6 +14,6 @@ public interface ImagePickerView {
 
     int getColumnCount();
 
-    void startImageShowerView(int clickItem);
+    void startAllImageBeanView(int clickItem);
 
 }

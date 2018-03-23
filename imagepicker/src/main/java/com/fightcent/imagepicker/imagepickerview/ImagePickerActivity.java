@@ -12,8 +12,9 @@ import com.fightcent.imagepicker.R;
 import com.fightcent.imagepicker.adapter.ImageAdapter;
 import com.fightcent.imagepicker.controller.ConfigConstantController;
 import com.fightcent.imagepicker.databinding.ActivityImagePickerBinding;
-import com.fightcent.imagepicker.imageshower.ImagePreviewActivity;
-import com.fightcent.imagepicker.imageshower.ImageShowerActivity;
+import com.fightcent.imagepicker.imageshower.AllImageBeanPreviewActivity;
+import com.fightcent.imagepicker.imageshower.BaseImagePreviewActivity;
+import com.fightcent.imagepicker.imageshower.PickedImageBeanPreviewActivity;
 import com.fightcent.imagepicker.model.ImageBean;
 import com.fightcent.imagepicker.model.event.AllImageBeanGotEvent;
 import com.fightcent.imagepicker.model.event.OnImagePickedEvent;
@@ -129,7 +130,7 @@ public class ImagePickerActivity extends BaseActivity implements ImagePickerView
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        startImagePreviewView();
+                        startPickedImageBeanView();
                     }
                 }
         );
@@ -227,17 +228,17 @@ public class ImagePickerActivity extends BaseActivity implements ImagePickerView
     }
 
     @Override
-    public void startImageShowerView(int clickItemPosition) {
-        Intent intent = new Intent(this, ImageShowerActivity.class);
-        intent.putExtra(ImageShowerActivity.CURRENT_SHOW_POSITION, clickItemPosition);
-        intent.putExtra(ImageShowerActivity.MAX_IMAGE_PICK_COUNT, mMaxImagePickCount);
+    public void startAllImageBeanView(int clickItemPosition) {
+        Intent intent = new Intent(this, AllImageBeanPreviewActivity.class);
+        intent.putExtra(BaseImagePreviewActivity.CURRENT_SHOW_POSITION, clickItemPosition);
+        intent.putExtra(BaseImagePreviewActivity.MAX_IMAGE_PICK_COUNT, mMaxImagePickCount);
         startActivity(intent);
     }
 
-    private void startImagePreviewView() {
-        Intent intent = new Intent(this, ImagePreviewActivity.class);
-        intent.putExtra(ImageShowerActivity.CURRENT_SHOW_POSITION, 0);
-        intent.putExtra(ImageShowerActivity.MAX_IMAGE_PICK_COUNT, mMaxImagePickCount);
+    private void startPickedImageBeanView() {
+        Intent intent = new Intent(this, PickedImageBeanPreviewActivity.class);
+        intent.putExtra(BaseImagePreviewActivity.CURRENT_SHOW_POSITION, 0);
+        intent.putExtra(BaseImagePreviewActivity.MAX_IMAGE_PICK_COUNT, mMaxImagePickCount);
         startActivity(intent);
     }
 
