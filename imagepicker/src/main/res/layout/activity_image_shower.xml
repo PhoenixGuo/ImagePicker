@@ -61,7 +61,6 @@
                     android:paddingLeft="@dimen/little_medium_spacing"
                     android:paddingRight="@dimen/little_medium_spacing"
                     android:paddingTop="@dimen/very_small_spacing"
-                    android:text="@string/conform"
                     android:textColor="@android:color/white"
                     android:textSize="@dimen/font_large_size" />
 

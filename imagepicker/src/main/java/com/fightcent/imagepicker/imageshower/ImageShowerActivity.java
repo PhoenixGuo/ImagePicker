@@ -17,11 +17,8 @@ import android.view.animation.DecelerateInterpolator;
 import com.fightcent.imagepicker.R;
 import com.fightcent.imagepicker.databinding.ActivityImageShowerBinding;
 import com.fightcent.imagepicker.imagepickerview.ImagePickerActivity;
-import com.fightcent.imagepicker.model.ImageBean;
 import com.fightcent.imagepicker.util.CollectionUtil;
 import com.fightcent.imagepicker.util.ViewUtil;
-
-import java.util.ArrayList;
 
 /**
  * Created by andy.guo on 2018/3/21.
@@ -30,11 +27,14 @@ import java.util.ArrayList;
 public class ImageShowerActivity extends AppCompatActivity {
 
     private ActivityImageShowerBinding mActivityImageShowerBinding;
-    public static final String ALL_IMAGE_BEAN_LIST = "ALL_IMAGE_BEAN_LIST";
-    private ArrayList<ImageBean> mAllImageBeanList = new ArrayList<>();
+/*    public static final String ALL_IMAGE_BEAN_LIST = "ALL_IMAGE_BEAN_LIST";
+    private ArrayList<ImageBean> mAllImageBeanList = new ArrayList<>();*/
 
-    public static final String INIT_SHOW_POSITION = "INIT_SHOW_POSITION";
-    private int mInitShowPosition;
+    public static final String CURRENT_SHOW_POSITION = "CURRENT_SHOW_POSITION";
+    private int mCurrentShowPosition;
+
+    public static final String MAX_IMAGE_PICK_COUNT = "MAX_IMAGE_PICK_COUNT";
+    private int mMaxImagePickCount;
 
     private boolean mIsShowToolBar = true;
     private ImageShowerAdapter mImageShowerAdapter;
@@ -56,7 +56,11 @@ public class ImageShowerActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         if (intent != null) {
-            mInitShowPosition = intent.getIntExtra(INIT_SHOW_POSITION, 0);
+            mCurrentShowPosition = intent.getIntExtra(CURRENT_SHOW_POSITION, 0);
+            mMaxImagePickCount = intent.getIntExtra(
+                    MAX_IMAGE_PICK_COUNT,
+                    0
+            );
         }
 
         initViews();
@@ -64,14 +68,18 @@ public class ImageShowerActivity extends AppCompatActivity {
     }
 
     private void initViews() {
+        setConformButtonText(
+                CollectionUtil.size(ImagePickerActivity.mPickedImageBeanList),
+                mMaxImagePickCount
+        );
         mImageShowerAdapter = new ImageShowerAdapter(getSupportFragmentManager());
         mActivityImageShowerBinding.vp.setAdapter(
                 mImageShowerAdapter
         );
-        mActivityImageShowerBinding.vp.setCurrentItem(mInitShowPosition);
-        setPositionSizeText(mInitShowPosition + 1);
+        mActivityImageShowerBinding.vp.setCurrentItem(mCurrentShowPosition);
+        setPositionSizeText(mCurrentShowPosition + 1);
 
-        if (ImagePickerActivity.mAllImageBeanList.get(mInitShowPosition).isIsPicked()) {
+        if (ImagePickerActivity.mAllImageBeanList.get(mCurrentShowPosition).isIsPicked()) {
             mActivityImageShowerBinding.ivPick.setSelected(true);
         }
     }
@@ -95,7 +103,7 @@ public class ImageShowerActivity extends AppCompatActivity {
 
                     @Override
                     public void onPageSelected(int position) {
-                        mInitShowPosition = position;
+                        mCurrentShowPosition = position;
                         setPositionSizeText(position + 1);
                         if (ImagePickerActivity.mAllImageBeanList.get(position).isIsPicked()) {
                             mActivityImageShowerBinding.ivPick.setSelected(true);
@@ -117,14 +125,32 @@ public class ImageShowerActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         if (mActivityImageShowerBinding.ivPick.isSelected()) {
                             mActivityImageShowerBinding.ivPick.setSelected(false);
-                            //TODO 图片取消选中，怎么把选中的值返回过去
-
-
+                            ImagePickerActivity.mAllImageBeanList
+                                    .get(mCurrentShowPosition)
+                                    .setIsPicked(
+                                            false
+                                    );
+                            ImagePickerActivity.mPickedImageBeanList.remove(
+                                    ImagePickerActivity.mAllImageBeanList.get(mCurrentShowPosition)
+                            );
+                            setConformButtonText(
+                                    CollectionUtil.size(ImagePickerActivity.mPickedImageBeanList),
+                                    mMaxImagePickCount
+                            );
                         } else {
                             mActivityImageShowerBinding.ivPick.setSelected(true);
-                            //TODO 图片选中之后的处理
-
-
+                            ImagePickerActivity.mAllImageBeanList
+                                    .get(mCurrentShowPosition)
+                                    .setIsPicked(
+                                            true
+                                    );
+                            ImagePickerActivity.mPickedImageBeanList.add(
+                                    ImagePickerActivity.mAllImageBeanList.get(mCurrentShowPosition)
+                            );
+                            setConformButtonText(
+                                    CollectionUtil.size(ImagePickerActivity.mPickedImageBeanList),
+                                    mMaxImagePickCount
+                            );
                         }
                     }
                 }
@@ -229,6 +255,16 @@ public class ImageShowerActivity extends AppCompatActivity {
         public int getCount() {
             return CollectionUtil.size(ImagePickerActivity.mAllImageBeanList);
         }
+    }
+
+    private void setConformButtonText(int pickedImageCount, int maxImageCount) {
+        mActivityImageShowerBinding.tvConform.setText(
+                String.format(
+                        getResources().getString(R.string.conform_count),
+                        pickedImageCount,
+                        maxImageCount
+                )
+        );
     }
 
 }

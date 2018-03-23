@@ -47,12 +47,11 @@ public class ImagePickerActivity extends AppCompatActivity implements ImagePicke
     private ImageAdapter mImageAdapter;
     public static final String ORDER_BY = MediaStore.Images.Media._ID + " DESC";
 
-    //TODO 待优化
     public static ArrayList<ImageBean> mAllImageBeanList = new ArrayList<>();
+    public static ArrayList<ImageBean> mPickedImageBeanList = new ArrayList<>();
 
-    private ArrayList<ImageBean> mPickedImageList = new ArrayList<>();
-    private static final String SAVE_INSTANCE_SELECTED_IMAGE_LIST
-            = "SAVE_INSTANCE_SELECTED_IMAGE_LIST";
+    private static final String SAVE_INSTANCE_PICKED_IMAGE_BEAN_LIST
+            = "SAVE_INSTANCE_PICKED_IMAGE_BEAN_LIST";
 
     public static final String COLUMN_COUNT = "COLUMN_COUNT";
     private int mColumnCount;
@@ -86,10 +85,10 @@ public class ImagePickerActivity extends AppCompatActivity implements ImagePicke
         }
 
         if (savedInstanceState != null) {
-            Object obj = savedInstanceState.get(SAVE_INSTANCE_SELECTED_IMAGE_LIST);
+            Object obj = savedInstanceState.get(SAVE_INSTANCE_PICKED_IMAGE_BEAN_LIST);
             if (obj instanceof ArrayList) {
                 ArrayList<ImageBean> saveInstanceSelectedPictureList = (ArrayList<ImageBean>) obj;
-                mPickedImageList.addAll(saveInstanceSelectedPictureList);
+                mPickedImageBeanList.addAll(saveInstanceSelectedPictureList);
             }
         }
 
@@ -107,7 +106,10 @@ public class ImagePickerActivity extends AppCompatActivity implements ImagePicke
                 getApplicationContext()
         ));
 
-        setConformButtonText();
+        setConformButtonText(
+                CollectionUtil.size(mPickedImageBeanList),
+                mMaxImagePickCount
+        );
 
         //查询图片的Uri
         Cursor cursor = getContentResolver().query(
@@ -125,8 +127,8 @@ public class ImagePickerActivity extends AppCompatActivity implements ImagePicke
                         mAllImageBeanList.clear();
                         while (cursor.moveToNext()) {
                             ImageBean imageBean = ImageBeanFactory.createImageBeanByCursor(cursor);
-                            if (!CollectionUtil.isEmpty(mPickedImageList)
-                                    && mPickedImageList.contains(imageBean)) {
+                            if (!CollectionUtil.isEmpty(mPickedImageBeanList)
+                                    && mPickedImageBeanList.contains(imageBean)) {
                                 imageBean.setIsPicked(true);
                             }
                             mAllImageBeanList.add(imageBean);
@@ -178,7 +180,7 @@ public class ImagePickerActivity extends AppCompatActivity implements ImagePicke
                     @Override
                     public void onClick(View v) {
                         EventBus.getDefault().post(
-                                new OnImagePickedEvent(mPickedImageList)
+                                new OnImagePickedEvent(mPickedImageBeanList)
                         );
                         ImagePickerActivity.this.finish();
                     }
@@ -190,17 +192,23 @@ public class ImagePickerActivity extends AppCompatActivity implements ImagePicke
     @Override
     public boolean imageCancelPick(ImageBean imageBean) {
         imageBean.setIsPicked(false);
-        mPickedImageList.remove(imageBean);
-        setConformButtonText();
+        mPickedImageBeanList.remove(imageBean);
+        setConformButtonText(
+                CollectionUtil.size(mPickedImageBeanList),
+                mMaxImagePickCount
+        );
         return true;
     }
 
     @Override
     public boolean imagePick(ImageBean imageBean) {
-        if (CollectionUtil.size(mPickedImageList) < mMaxImagePickCount) {
+        if (CollectionUtil.size(mPickedImageBeanList) < mMaxImagePickCount) {
             imageBean.setIsPicked(true);
-            mPickedImageList.add(imageBean);
-            setConformButtonText();
+            mPickedImageBeanList.add(imageBean);
+            setConformButtonText(
+                    CollectionUtil.size(mPickedImageBeanList),
+                    mMaxImagePickCount
+            );
             return true;
         }
         ToastUtil.getInstance().showToast(
@@ -210,12 +218,12 @@ public class ImagePickerActivity extends AppCompatActivity implements ImagePicke
         return false;
     }
 
-    private void setConformButtonText() {
+    private void setConformButtonText(int pickedImageCount, int maxImageCount) {
         mActivityImagePickerBinding.tvConform.setText(
                 String.format(
                         getResources().getString(R.string.conform_count),
-                        CollectionUtil.size(mPickedImageList),
-                        mMaxImagePickCount
+                        pickedImageCount,
+                        maxImageCount
                 )
         );
     }
@@ -226,9 +234,23 @@ public class ImagePickerActivity extends AppCompatActivity implements ImagePicke
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        //TODO 待优化，不需要每次都刷
+        if (mImageAdapter != null) {
+            mImageAdapter.notifyDataSetChanged();
+        }
+        setConformButtonText(
+                CollectionUtil.size(mPickedImageBeanList),
+                mMaxImagePickCount
+        );
+    }
+
+    @Override
     public void startImageShowerView(int clickItem) {
         Intent intent = new Intent(this, ImageShowerActivity.class);
-        intent.putExtra(ImageShowerActivity.INIT_SHOW_POSITION, clickItem);
+        intent.putExtra(ImageShowerActivity.CURRENT_SHOW_POSITION, clickItem);
+        intent.putExtra(ImageShowerActivity.MAX_IMAGE_PICK_COUNT, mMaxImagePickCount);
         startActivity(intent);
     }
 
@@ -241,7 +263,7 @@ public class ImagePickerActivity extends AppCompatActivity implements ImagePicke
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putSerializable(SAVE_INSTANCE_SELECTED_IMAGE_LIST, mPickedImageList);
+        outState.putSerializable(SAVE_INSTANCE_SELECTED_IMAGE_LIST, mPickedImageBeanList);
     }
 
 }

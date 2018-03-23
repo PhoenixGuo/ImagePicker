@@ -2,7 +2,6 @@
     <string name="app_name">Imagepicker</string>
     <string name="double_click_to_top">Double click to top</string>
     <string name="conform_count">OK(%1$d/%2$d)</string>
-    <string name="conform">OK</string>
     <string name="position_size">%1$d/%2$d</string>
     <string name="album">Album</string>
     <string name="preview">Preview</string>
