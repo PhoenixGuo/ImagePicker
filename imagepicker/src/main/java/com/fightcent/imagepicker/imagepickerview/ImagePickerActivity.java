@@ -1,54 +1,41 @@
 package com.fightcent.imagepicker.imagepickerview;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import com.fightcent.imagepicker.BaseActivity;
+import com.fightcent.imagepicker.ImagePicker;
 import com.fightcent.imagepicker.R;
 import com.fightcent.imagepicker.adapter.ImageAdapter;
 import com.fightcent.imagepicker.controller.ConfigConstantController;
 import com.fightcent.imagepicker.databinding.ActivityImagePickerBinding;
 import com.fightcent.imagepicker.imageshower.ImageShowerActivity;
 import com.fightcent.imagepicker.model.ImageBean;
-import com.fightcent.imagepicker.model.ImageBeanFactory;
-import com.fightcent.imagepicker.model.OnImagePickedEvent;
-import com.fightcent.imagepicker.model.OnImagePickerActivityDestroyEvent;
+import com.fightcent.imagepicker.model.event.AllImageBeanGotEvent;
+import com.fightcent.imagepicker.model.event.OnImagePickedEvent;
+import com.fightcent.imagepicker.model.event.OnImagePickerActivityDestroyEvent;
 import com.fightcent.imagepicker.util.CollectionUtil;
 import com.fightcent.imagepicker.util.ToastUtil;
 import com.fightcent.imagepicker.util.ViewUtil;
 import com.fightcent.imagepicker.widget.ItemThumbnailDecoration;
 
 import org.greenrobot.eventbus.EventBus;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
+import org.greenrobot.eventbus.Subscribe;
 
 /**
  * Created by andy.guo on 2018/1/19.
  */
 
-public class ImagePickerActivity extends AppCompatActivity implements ImagePickerView {
+public class ImagePickerActivity extends BaseActivity implements ImagePickerView {
 
     private ActivityImagePickerBinding mActivityImagePickerBinding;
 
     private GridLayoutManager mGridLayoutManager;
     private ImageAdapter mImageAdapter;
-    public static final String ORDER_BY = MediaStore.Images.Media._ID + " DESC";
-
-    public static ArrayList<ImageBean> mAllImageBeanList = new ArrayList<>();
-    public static ArrayList<ImageBean> mPickedImageBeanList = new ArrayList<>();
 
     private static final String SAVE_INSTANCE_PICKED_IMAGE_BEAN_LIST
             = "SAVE_INSTANCE_PICKED_IMAGE_BEAN_LIST";
@@ -84,13 +71,14 @@ public class ImagePickerActivity extends AppCompatActivity implements ImagePicke
             );
         }
 
-        if (savedInstanceState != null) {
+        //TODO
+/*        if (savedInstanceState != null) {
             Object obj = savedInstanceState.get(SAVE_INSTANCE_PICKED_IMAGE_BEAN_LIST);
             if (obj instanceof ArrayList) {
                 ArrayList<ImageBean> saveInstanceSelectedPictureList = (ArrayList<ImageBean>) obj;
                 mPickedImageBeanList.addAll(saveInstanceSelectedPictureList);
             }
-        }
+        }*/
 
         initViews();
         initListeners();
@@ -107,44 +95,13 @@ public class ImagePickerActivity extends AppCompatActivity implements ImagePicke
         ));
 
         setConformButtonText(
-                CollectionUtil.size(mPickedImageBeanList),
+                CollectionUtil.size(ImagePicker.sPickedImageBeanList),
                 mMaxImagePickCount
         );
 
-        //查询图片的Uri
-        Cursor cursor = getContentResolver().query(
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI, null, null, null, ORDER_BY);
-        Observable.just(
-                cursor
-        ).subscribeOn(
-                Schedulers.io()
-        ).observeOn(
-                AndroidSchedulers.mainThread()
-        ).map(
-                new Func1<Cursor, List<ImageBean>>() {
-                    @Override
-                    public List<ImageBean> call(Cursor cursor) {
-                        mAllImageBeanList.clear();
-                        while (cursor.moveToNext()) {
-                            ImageBean imageBean = ImageBeanFactory.createImageBeanByCursor(cursor);
-                            if (!CollectionUtil.isEmpty(mPickedImageBeanList)
-                                    && mPickedImageBeanList.contains(imageBean)) {
-                                imageBean.setIsPicked(true);
-                            }
-                            mAllImageBeanList.add(imageBean);
-                        }
-                        return mAllImageBeanList;
-                    }
-                }
-        ).subscribe(
-                new Action1<List<ImageBean>>() {
-                    @Override
-                    public void call(List<ImageBean> imageList) {
-                        mImageAdapter.setImageList(imageList);
-                        mImageAdapter.notifyDataSetChanged();
-                    }
-                }
-        );
+        mImageAdapter.setImageList(ImagePicker.sAllImageBeanList);
+        mImageAdapter.notifyDataSetChanged();
+
     }
 
     private void initListeners() {
@@ -180,21 +137,28 @@ public class ImagePickerActivity extends AppCompatActivity implements ImagePicke
                     @Override
                     public void onClick(View v) {
                         EventBus.getDefault().post(
-                                new OnImagePickedEvent(mPickedImageBeanList)
+                                new OnImagePickedEvent()
                         );
-                        ImagePickerActivity.this.finish();
                     }
                 }
         );
 
     }
 
+    @Subscribe
+    public void onReceivedAllImageBeanGotEvent(AllImageBeanGotEvent allImageBeanGotEvent) {
+        if (mImageAdapter != null) {
+            mImageAdapter.setImageList(ImagePicker.sAllImageBeanList);
+            mImageAdapter.notifyDataSetChanged();
+        }
+    }
+
     @Override
     public boolean imageCancelPick(ImageBean imageBean) {
         imageBean.setIsPicked(false);
-        mPickedImageBeanList.remove(imageBean);
+        ImagePicker.sPickedImageBeanList.remove(imageBean);
         setConformButtonText(
-                CollectionUtil.size(mPickedImageBeanList),
+                CollectionUtil.size(ImagePicker.sPickedImageBeanList),
                 mMaxImagePickCount
         );
         return true;
@@ -202,11 +166,11 @@ public class ImagePickerActivity extends AppCompatActivity implements ImagePicke
 
     @Override
     public boolean imagePick(ImageBean imageBean) {
-        if (CollectionUtil.size(mPickedImageBeanList) < mMaxImagePickCount) {
+        if (CollectionUtil.size(ImagePicker.sPickedImageBeanList) < mMaxImagePickCount) {
             imageBean.setIsPicked(true);
-            mPickedImageBeanList.add(imageBean);
+            ImagePicker.sPickedImageBeanList.add(imageBean);
             setConformButtonText(
-                    CollectionUtil.size(mPickedImageBeanList),
+                    CollectionUtil.size(ImagePicker.sPickedImageBeanList),
                     mMaxImagePickCount
             );
             return true;
@@ -241,7 +205,7 @@ public class ImagePickerActivity extends AppCompatActivity implements ImagePicke
             mImageAdapter.notifyDataSetChanged();
         }
         setConformButtonText(
-                CollectionUtil.size(mPickedImageBeanList),
+                CollectionUtil.size(ImagePicker.sPickedImageBeanList),
                 mMaxImagePickCount
         );
     }
@@ -263,7 +227,8 @@ public class ImagePickerActivity extends AppCompatActivity implements ImagePicke
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putSerializable(SAVE_INSTANCE_SELECTED_IMAGE_LIST, mPickedImageBeanList);
+        //TODO
+//        outState.putSerializable(SAVE_INSTANCE_SELECTED_IMAGE_LIST, ImagePicker.mPickedImageBeanList);
     }
 
 }

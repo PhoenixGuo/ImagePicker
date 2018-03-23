@@ -1,4 +1,4 @@
-package com.fightcent.imagepicker.model;
+package com.fightcent.imagepicker.model.event;
 
 /**
  * Created by andy.guo on 2018/3/20.

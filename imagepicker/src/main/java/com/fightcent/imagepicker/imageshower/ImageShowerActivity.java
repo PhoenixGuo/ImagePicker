@@ -8,23 +8,28 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 
+import com.fightcent.imagepicker.BaseActivity;
+import com.fightcent.imagepicker.ImagePicker;
 import com.fightcent.imagepicker.R;
 import com.fightcent.imagepicker.databinding.ActivityImageShowerBinding;
-import com.fightcent.imagepicker.imagepickerview.ImagePickerActivity;
+import com.fightcent.imagepicker.model.ImageBean;
+import com.fightcent.imagepicker.model.event.OnImagePickedEvent;
 import com.fightcent.imagepicker.util.CollectionUtil;
+import com.fightcent.imagepicker.util.ToastUtil;
 import com.fightcent.imagepicker.util.ViewUtil;
+
+import org.greenrobot.eventbus.EventBus;
 
 /**
  * Created by andy.guo on 2018/3/21.
  */
 
-public class ImageShowerActivity extends AppCompatActivity {
+public class ImageShowerActivity extends BaseActivity {
 
     private ActivityImageShowerBinding mActivityImageShowerBinding;
 /*    public static final String ALL_IMAGE_BEAN_LIST = "ALL_IMAGE_BEAN_LIST";
@@ -69,7 +74,7 @@ public class ImageShowerActivity extends AppCompatActivity {
 
     private void initViews() {
         setConformButtonText(
-                CollectionUtil.size(ImagePickerActivity.mPickedImageBeanList),
+                CollectionUtil.size(ImagePicker.sPickedImageBeanList),
                 mMaxImagePickCount
         );
         mImageShowerAdapter = new ImageShowerAdapter(getSupportFragmentManager());
@@ -79,7 +84,7 @@ public class ImageShowerActivity extends AppCompatActivity {
         mActivityImageShowerBinding.vp.setCurrentItem(mCurrentShowPosition);
         setPositionSizeText(mCurrentShowPosition + 1);
 
-        if (ImagePickerActivity.mAllImageBeanList.get(mCurrentShowPosition).isIsPicked()) {
+        if (ImagePicker.sAllImageBeanList.get(mCurrentShowPosition).isIsPicked()) {
             mActivityImageShowerBinding.ivPick.setSelected(true);
         }
     }
@@ -105,7 +110,7 @@ public class ImageShowerActivity extends AppCompatActivity {
                     public void onPageSelected(int position) {
                         mCurrentShowPosition = position;
                         setPositionSizeText(position + 1);
-                        if (ImagePickerActivity.mAllImageBeanList.get(position).isIsPicked()) {
+                        if (ImagePicker.sAllImageBeanList.get(position).isIsPicked()) {
                             mActivityImageShowerBinding.ivPick.setSelected(true);
                         } else {
                             mActivityImageShowerBinding.ivPick.setSelected(false);
@@ -124,37 +129,57 @@ public class ImageShowerActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         if (mActivityImageShowerBinding.ivPick.isSelected()) {
-                            mActivityImageShowerBinding.ivPick.setSelected(false);
-                            ImagePickerActivity.mAllImageBeanList
-                                    .get(mCurrentShowPosition)
-                                    .setIsPicked(
-                                            false
-                                    );
-                            ImagePickerActivity.mPickedImageBeanList.remove(
-                                    ImagePickerActivity.mAllImageBeanList.get(mCurrentShowPosition)
-                            );
-                            setConformButtonText(
-                                    CollectionUtil.size(ImagePickerActivity.mPickedImageBeanList),
-                                    mMaxImagePickCount
+                            imageCancelPick(
+                                    ImagePicker.sAllImageBeanList.get(mCurrentShowPosition)
                             );
                         } else {
-                            mActivityImageShowerBinding.ivPick.setSelected(true);
-                            ImagePickerActivity.mAllImageBeanList
-                                    .get(mCurrentShowPosition)
-                                    .setIsPicked(
-                                            true
-                                    );
-                            ImagePickerActivity.mPickedImageBeanList.add(
-                                    ImagePickerActivity.mAllImageBeanList.get(mCurrentShowPosition)
-                            );
-                            setConformButtonText(
-                                    CollectionUtil.size(ImagePickerActivity.mPickedImageBeanList),
-                                    mMaxImagePickCount
+                            imagePick(
+                                    ImagePicker.sAllImageBeanList.get(mCurrentShowPosition)
                             );
                         }
                     }
                 }
         );
+
+        mActivityImageShowerBinding.tvConform.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        EventBus.getDefault().post(
+                                new OnImagePickedEvent()
+                        );
+                    }
+                }
+        );
+    }
+
+    public boolean imageCancelPick(ImageBean imageBean) {
+        imageBean.setIsPicked(false);
+        ImagePicker.sPickedImageBeanList.remove(imageBean);
+        mActivityImageShowerBinding.ivPick.setSelected(false);
+        setConformButtonText(
+                CollectionUtil.size(ImagePicker.sPickedImageBeanList),
+                mMaxImagePickCount
+        );
+        return true;
+    }
+
+    public boolean imagePick(ImageBean imageBean) {
+        if (CollectionUtil.size(ImagePicker.sPickedImageBeanList) < mMaxImagePickCount) {
+            imageBean.setIsPicked(true);
+            ImagePicker.sPickedImageBeanList.add(imageBean);
+            mActivityImageShowerBinding.ivPick.setSelected(true);
+            setConformButtonText(
+                    CollectionUtil.size(ImagePicker.sPickedImageBeanList),
+                    mMaxImagePickCount
+            );
+            return true;
+        }
+        ToastUtil.getInstance().showToast(
+                getApplicationContext(),
+                R.string.can_not_pick_more_image
+        );
+        return false;
     }
 
     public void showToolBar() {
@@ -173,7 +198,7 @@ public class ImageShowerActivity extends AppCompatActivity {
         String positionSizeText = String.format(
                 getResources().getString(R.string.position_size),
                 position,
-                CollectionUtil.size(ImagePickerActivity.mAllImageBeanList)
+                CollectionUtil.size(ImagePicker.sAllImageBeanList)
         );
         mActivityImageShowerBinding.tvPositionSize.setText(positionSizeText);
     }
@@ -247,13 +272,13 @@ public class ImageShowerActivity extends AppCompatActivity {
         @Override
         public Fragment getItem(int position) {
             return ImageShowerFragment.makeFragment(
-                    ImagePickerActivity.mAllImageBeanList.get(position)
+                    ImagePicker.sAllImageBeanList.get(position)
             );
         }
 
         @Override
         public int getCount() {
-            return CollectionUtil.size(ImagePickerActivity.mAllImageBeanList);
+            return CollectionUtil.size(ImagePicker.sAllImageBeanList);
         }
     }
 

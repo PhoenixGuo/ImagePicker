@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
         mPickedImageAdapter = new PickedImageAdapter(getApplicationContext(), mImageList);
         mActivityMainBinding.rv.setAdapter(mPickedImageAdapter);
 
-        final ImagePicker imagePicker = new ImagePicker.Builder(MainActivity.this)
+        final ImagePicker imagePicker = new ImagePicker.Builder(getApplicationContext())
                 .setMaxImagePickCount(7)
                 .setOnImagePickedListener(
                         new MyOnImagePickedListener(MainActivity.this)
