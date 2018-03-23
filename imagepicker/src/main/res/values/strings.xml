@@ -1,10 +1,12 @@
 <resources>
     <string name="app_name">Imagepicker</string>
     <string name="double_click_to_top">Double click to top</string>
-    <string name="conform_count">OK(%1$d/%2$d)</string>
+    <string name="conform_count">Done(%1$d/%2$d)</string>
     <string name="position_size">%1$d/%2$d</string>
     <string name="album">Album</string>
     <string name="preview">Preview</string>
+    <string name="preview_size">Preview(%1$d)</string>
     <string name="can_not_pick_more_image">Can\'t pick more image</string>
+    <string name="select">Select</string>
 
 </resources>

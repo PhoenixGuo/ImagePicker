@@ -13,7 +13,6 @@
             android:id="@+id/tb_top"
             android:layout_width="match_parent"
             android:layout_height="@dimen/title_bar_height"
-            android:background="@color/gray_very_little_light"
             app:contentInsetLeft="0dp"
             app:contentInsetStart="0dp">
 
@@ -43,9 +42,8 @@
                     android:paddingTop="@dimen/very_small_spacing"
                     android:text="@string/double_click_to_top"
                     android:textColor="@android:color/white"
-                    android:textSize="@dimen/font_large_size"
-                    android:visibility="gone"
-                    tools:visibility="visible" />
+                    android:textSize="@dimen/font_small_size"
+                    android:visibility="gone" />
 
                 <TextView
                     android:id="@+id/tv_conform"
@@ -60,8 +58,8 @@
                     android:paddingRight="@dimen/little_medium_spacing"
                     android:paddingTop="@dimen/very_small_spacing"
                     android:text="@string/double_click_to_top"
-                    android:textColor="@android:color/white"
-                    android:textSize="@dimen/font_large_size"
+                    android:textColor="@color/selector_text_enable_disable"
+                    android:textSize="@dimen/font_small_size"
                     tools:text="确认(99999/100000)" />
 
             </RelativeLayout>
@@ -80,8 +78,6 @@
             android:id="@+id/tb_bottom"
             android:layout_width="match_parent"
             android:layout_height="@dimen/title_bar_height"
-            android:background="@color/gray_very_little_light"
-            android:visibility="gone"
             app:contentInsetLeft="0dp"
             app:contentInsetStart="0dp">
 
@@ -102,7 +98,8 @@
                     android:paddingTop="@dimen/very_small_spacing"
                     android:text="@string/album"
                     android:textColor="@android:color/white"
-                    android:textSize="@dimen/font_large_size" />
+                    android:textSize="@dimen/font_large_size"
+                    android:visibility="gone" />
 
                 <TextView
                     android:id="@+id/tv_preview"
@@ -118,8 +115,8 @@
                     android:paddingRight="@dimen/little_medium_spacing"
                     android:paddingTop="@dimen/very_small_spacing"
                     android:text="@string/preview"
-                    android:textColor="@android:color/white"
-                    android:textSize="@dimen/font_large_size" />
+                    android:textColor="@color/selector_text_enable_disable"
+                    android:textSize="@dimen/font_small_size" />
 
             </RelativeLayout>
         </android.support.v7.widget.Toolbar>

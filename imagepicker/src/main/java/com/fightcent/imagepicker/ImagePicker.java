@@ -157,9 +157,7 @@ public class ImagePicker implements Serializable {
         Intent intent = new Intent(mContext, ImagePickerActivity.class);
         intent.putExtra(ImagePickerActivity.COLUMN_COUNT, mColumnCount);
         intent.putExtra(ImagePickerActivity.MAX_IMAGE_PICK_COUNT, mMaxImagePickCount);
-        intent.setFlags(
-                Intent.FLAG_ACTIVITY_NEW_TASK
-        );
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mContext.startActivity(intent);
     }
 
@@ -188,6 +186,7 @@ public class ImagePicker implements Serializable {
                                 }
                                 sAllImageBeanList.add(imageBean);
                             }
+                            cursor.close();
                         }
                         return sAllImageBeanList;
                     }

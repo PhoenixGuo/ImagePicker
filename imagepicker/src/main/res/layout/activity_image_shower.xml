@@ -6,8 +6,8 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true"
-        android:background="@android:color/black">
+        android:background="@android:color/black"
+        android:fitsSystemWindows="true">
 
         <android.support.v4.view.ViewPager
             android:id="@+id/vp"
@@ -18,7 +18,7 @@
             android:id="@+id/tb_top"
             android:layout_width="match_parent"
             android:layout_height="@dimen/title_bar_height"
-            android:background="@color/gray_very_little_light"
+            android:background="@color/black_alpha_90"
             app:contentInsetLeft="0dp"
             app:contentInsetStart="0dp">
 
@@ -38,15 +38,15 @@
                     android:id="@+id/tv_position_size"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
+                    android:layout_centerVertical="true"
                     android:layout_toRightOf="@+id/iv_back_arrow"
                     android:ellipsize="end"
                     android:gravity="center_vertical"
-                    android:layout_centerVertical="true"
                     android:lines="1"
                     android:paddingBottom="@dimen/very_small_spacing"
                     android:paddingTop="@dimen/very_small_spacing"
                     android:textColor="@android:color/white"
-                    android:textSize="@dimen/font_large_size"
+                    android:textSize="@dimen/font_small_size"
                     tools:text="3/12" />
 
                 <TextView
@@ -61,8 +61,8 @@
                     android:paddingLeft="@dimen/little_medium_spacing"
                     android:paddingRight="@dimen/little_medium_spacing"
                     android:paddingTop="@dimen/very_small_spacing"
-                    android:textColor="@android:color/white"
-                    android:textSize="@dimen/font_large_size" />
+                    android:textColor="@color/selector_text_enable_disable"
+                    android:textSize="@dimen/font_small_size" />
 
             </RelativeLayout>
 
@@ -73,7 +73,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/title_bar_height"
             android:layout_alignParentBottom="true"
-            android:background="@color/gray_very_little_light"
+            android:background="@color/black_alpha_90"
             app:contentInsetLeft="0dp"
             app:contentInsetStart="0dp">
 
@@ -85,11 +85,22 @@
                     android:id="@+id/iv_pick"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@+id/tv_select"
+                    android:padding="@dimen/small_spacing"
+                    android:src="@drawable/picker_pick_box" />
+
+                <TextView
+                    android:id="@+id/tv_select"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:padding="@dimen/small_spacing"
-                    android:src="@drawable/picker_pick_box" />
+                    android:gravity="center"
+                    android:paddingRight="@dimen/small_spacing"
+                    android:text="@string/select"
+                    android:textColor="@android:color/white" />
 
             </RelativeLayout>
         </android.support.v7.widget.Toolbar>

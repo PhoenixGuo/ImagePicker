@@ -5,5 +5,7 @@
     <string name="position_size">%1$d/%2$d</string>
     <string name="album">相册</string>
     <string name="preview">预览</string>
+    <string name="preview_size">预览(%1$d)</string>
     <string name="can_not_pick_more_image">已达到最大选择张数</string>
+    <string name="select">选择</string>
 </resources>

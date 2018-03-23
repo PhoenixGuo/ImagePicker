@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.fightcent.imagepicker.BaseActivity;
@@ -13,6 +12,7 @@ import com.fightcent.imagepicker.R;
 import com.fightcent.imagepicker.adapter.ImageAdapter;
 import com.fightcent.imagepicker.controller.ConfigConstantController;
 import com.fightcent.imagepicker.databinding.ActivityImagePickerBinding;
+import com.fightcent.imagepicker.imageshower.ImagePreviewActivity;
 import com.fightcent.imagepicker.imageshower.ImageShowerActivity;
 import com.fightcent.imagepicker.model.ImageBean;
 import com.fightcent.imagepicker.model.event.AllImageBeanGotEvent;
@@ -20,7 +20,6 @@ import com.fightcent.imagepicker.model.event.OnImagePickedEvent;
 import com.fightcent.imagepicker.model.event.OnImagePickerActivityDestroyEvent;
 import com.fightcent.imagepicker.util.CollectionUtil;
 import com.fightcent.imagepicker.util.ToastUtil;
-import com.fightcent.imagepicker.util.ViewUtil;
 import com.fightcent.imagepicker.widget.ItemThumbnailDecoration;
 
 import org.greenrobot.eventbus.EventBus;
@@ -98,6 +97,7 @@ public class ImagePickerActivity extends BaseActivity implements ImagePickerView
                 CollectionUtil.size(ImagePicker.sPickedImageBeanList),
                 mMaxImagePickCount
         );
+        setPreviewButtonText(CollectionUtil.size(ImagePicker.sPickedImageBeanList));
 
         mImageAdapter.setImageList(ImagePicker.sAllImageBeanList);
         mImageAdapter.notifyDataSetChanged();
@@ -114,24 +114,6 @@ public class ImagePickerActivity extends BaseActivity implements ImagePickerView
                 }
         );
 
-        mActivityImagePickerBinding.rvPictures.addOnScrollListener(
-                new RecyclerView.OnScrollListener() {
-                    @Override
-                    public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                        super.onScrollStateChanged(recyclerView, newState);
-                        if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                            int firstVisibleItemPosition
-                                    = mGridLayoutManager.findFirstVisibleItemPosition();
-                            if (firstVisibleItemPosition > 20) {
-                                ViewUtil.showView(mActivityImagePickerBinding.tvDoubleClickToTop);
-                            } else {
-                                ViewUtil.hideView(mActivityImagePickerBinding.tvDoubleClickToTop);
-                            }
-                        }
-                    }
-                }
-        );
-
         mActivityImagePickerBinding.tvConform.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -139,6 +121,15 @@ public class ImagePickerActivity extends BaseActivity implements ImagePickerView
                         EventBus.getDefault().post(
                                 new OnImagePickedEvent()
                         );
+                    }
+                }
+        );
+
+        mActivityImagePickerBinding.tvPreview.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        startImagePreviewView();
                     }
                 }
         );
@@ -161,6 +152,7 @@ public class ImagePickerActivity extends BaseActivity implements ImagePickerView
                 CollectionUtil.size(ImagePicker.sPickedImageBeanList),
                 mMaxImagePickCount
         );
+        setPreviewButtonText(CollectionUtil.size(ImagePicker.sPickedImageBeanList));
         return true;
     }
 
@@ -173,6 +165,7 @@ public class ImagePickerActivity extends BaseActivity implements ImagePickerView
                     CollectionUtil.size(ImagePicker.sPickedImageBeanList),
                     mMaxImagePickCount
             );
+            setPreviewButtonText(CollectionUtil.size(ImagePicker.sPickedImageBeanList));
             return true;
         }
         ToastUtil.getInstance().showToast(
@@ -183,6 +176,11 @@ public class ImagePickerActivity extends BaseActivity implements ImagePickerView
     }
 
     private void setConformButtonText(int pickedImageCount, int maxImageCount) {
+        if (pickedImageCount > 0) {
+            mActivityImagePickerBinding.tvConform.setEnabled(true);
+        } else {
+            mActivityImagePickerBinding.tvConform.setEnabled(false);
+        }
         mActivityImagePickerBinding.tvConform.setText(
                 String.format(
                         getResources().getString(R.string.conform_count),
@@ -190,6 +188,23 @@ public class ImagePickerActivity extends BaseActivity implements ImagePickerView
                         maxImageCount
                 )
         );
+    }
+
+    private void setPreviewButtonText(int pickedImageBeanSize) {
+        if (pickedImageBeanSize > 0) {
+            mActivityImagePickerBinding.tvPreview.setEnabled(true);
+            mActivityImagePickerBinding.tvPreview.setText(
+                    String.format(
+                            getResources().getString(R.string.preview_size),
+                            pickedImageBeanSize
+                    )
+            );
+        } else {
+            mActivityImagePickerBinding.tvPreview.setEnabled(false);
+            mActivityImagePickerBinding.tvPreview.setText(
+                    R.string.preview
+            );
+        }
     }
 
     @Override
@@ -208,12 +223,20 @@ public class ImagePickerActivity extends BaseActivity implements ImagePickerView
                 CollectionUtil.size(ImagePicker.sPickedImageBeanList),
                 mMaxImagePickCount
         );
+        setPreviewButtonText(CollectionUtil.size(ImagePicker.sPickedImageBeanList));
     }
 
     @Override
-    public void startImageShowerView(int clickItem) {
+    public void startImageShowerView(int clickItemPosition) {
         Intent intent = new Intent(this, ImageShowerActivity.class);
-        intent.putExtra(ImageShowerActivity.CURRENT_SHOW_POSITION, clickItem);
+        intent.putExtra(ImageShowerActivity.CURRENT_SHOW_POSITION, clickItemPosition);
+        intent.putExtra(ImageShowerActivity.MAX_IMAGE_PICK_COUNT, mMaxImagePickCount);
+        startActivity(intent);
+    }
+
+    private void startImagePreviewView() {
+        Intent intent = new Intent(this, ImagePreviewActivity.class);
+        intent.putExtra(ImageShowerActivity.CURRENT_SHOW_POSITION, 0);
         intent.putExtra(ImageShowerActivity.MAX_IMAGE_PICK_COUNT, mMaxImagePickCount);
         startActivity(intent);
     }

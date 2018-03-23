@@ -23,7 +23,7 @@ public class ImageShowerFragment extends Fragment {
     private static final String IMAGE_BEAN = "IMAGE_BEAN";
     private ImageBean mImageBean;
     private FragmentImageShowerBinding mFragmentImageShowerBinding;
-    private ImageShowerActivity mImageShowerActivity;
+    private BaseImageShowerActivity mBaseImageShowerActivity;
 
     public static ImageShowerFragment makeFragment(ImageBean imageBean) {
         ImageShowerFragment imageShowerFragment = new ImageShowerFragment();
@@ -61,8 +61,8 @@ public class ImageShowerFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         FragmentActivity fragmentActivity = getActivity();
-        if (fragmentActivity instanceof ImageShowerActivity) {
-            mImageShowerActivity = (ImageShowerActivity) fragmentActivity;
+        if (fragmentActivity instanceof BaseImageShowerActivity) {
+            mBaseImageShowerActivity = (BaseImageShowerActivity) fragmentActivity;
         }
     }
 
@@ -79,8 +79,8 @@ public class ImageShowerFragment extends Fragment {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (mImageShowerActivity != null) {
-                            mImageShowerActivity.showToolBar();
+                        if (mBaseImageShowerActivity != null) {
+                            mBaseImageShowerActivity.showToolBar();
                         }
                     }
                 }
