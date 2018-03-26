@@ -40,6 +40,7 @@ public class ImagePicker implements Serializable {
     //图片编辑
     //相机
     //小图预览
+    //加载loading
 
     private Context mContext;
 
