@@ -32,7 +32,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:padding="@dimen/very_small_spacing"
-                    android:src="@drawable/ic_arrow_back_white_32dp" />
+                    android:src="@drawable/ic_back_white_18dp" />
 
                 <TextView
                     android:id="@+id/tv_position_size"

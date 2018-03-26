@@ -70,6 +70,8 @@ public class ImageShowerFragment extends Fragment {
         if (mImageBean != null) {
             Glide.with(getContext())
                     .load(mImageBean.getContentUriString())
+                    .asBitmap()
+                    .thumbnail(0.1f)
                     .into(mFragmentImageShowerBinding.iv);
         }
     }

@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:padding="@dimen/super_small_spacing"
+            android:padding="@dimen/very_small_spacing"
             android:src="@drawable/picker_pick_box" />
 
     </com.fightcent.imagepicker.widget.SquareRelativeLayout>

@@ -110,6 +110,10 @@ public class ImagePickerActivity extends BaseActivity implements ImagePickerView
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        //清空两个静态集合
+                        ImagePicker.sAllImageBeanList.clear();
+                        ImagePicker.sPickedImageBeanList.clear();
+
                         ImagePickerActivity.this.finish();
                     }
                 }

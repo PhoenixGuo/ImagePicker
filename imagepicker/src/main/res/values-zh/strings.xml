@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="choose_photo">选择图片</string>
     <string name="double_click_to_top">双击此处回到最顶部</string>
     <string name="conform_count">确定(%1$d/%2$d)</string>
     <string name="position_size">%1$d/%2$d</string>

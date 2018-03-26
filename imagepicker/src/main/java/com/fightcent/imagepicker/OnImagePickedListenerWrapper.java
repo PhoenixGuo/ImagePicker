@@ -26,6 +26,7 @@ public class OnImagePickedListenerWrapper {
         if (mOnImagePickedListener != null) {
             ArrayList<ImageBean> imageBeanList = new ArrayList<>();
             imageBeanList.addAll(ImagePicker.sPickedImageBeanList);
+            //清空两个静态集合
             ImagePicker.sAllImageBeanList.clear();
             ImagePicker.sPickedImageBeanList.clear();
             ActivityManager.getAppManager().finishAllActivity();

@@ -26,10 +26,10 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:padding="@dimen/very_small_spacing"
-                    android:src="@drawable/ic_arrow_back_white_32dp" />
+                    android:src="@drawable/ic_back_white_18dp" />
 
                 <TextView
-                    android:id="@+id/tv_double_click_to_top"
+                    android:id="@+id/tv_title"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_centerVertical="true"
@@ -40,10 +40,9 @@
                     android:lines="1"
                     android:paddingBottom="@dimen/very_small_spacing"
                     android:paddingTop="@dimen/very_small_spacing"
-                    android:text="@string/double_click_to_top"
+                    android:text="@string/choose_photo"
                     android:textColor="@android:color/white"
-                    android:textSize="@dimen/font_small_size"
-                    android:visibility="gone" />
+                    android:textSize="@dimen/font_small_size" />
 
                 <TextView
                     android:id="@+id/tv_conform"
@@ -57,7 +56,6 @@
                     android:paddingLeft="@dimen/little_medium_spacing"
                     android:paddingRight="@dimen/little_medium_spacing"
                     android:paddingTop="@dimen/very_small_spacing"
-                    android:text="@string/double_click_to_top"
                     android:textColor="@color/selector_text_enable_disable"
                     android:textSize="@dimen/font_small_size"
                     tools:text="确认(99999/100000)" />
