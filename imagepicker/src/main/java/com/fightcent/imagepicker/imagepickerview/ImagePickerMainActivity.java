@@ -1,8 +1,18 @@
 package com.fightcent.imagepicker.imagepickerview;
 
+import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.databinding.DataBindingUtil;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.view.View;
 
@@ -10,32 +20,44 @@ import com.fightcent.imagepicker.BaseActivity;
 import com.fightcent.imagepicker.ImagePicker;
 import com.fightcent.imagepicker.R;
 import com.fightcent.imagepicker.adapter.ImageAdapter;
+import com.fightcent.imagepicker.controller.CodeConstantController;
 import com.fightcent.imagepicker.controller.ConfigConstantController;
 import com.fightcent.imagepicker.databinding.ActivityImagePickerBinding;
 import com.fightcent.imagepicker.imageshower.AllImageBeanPreviewActivity;
 import com.fightcent.imagepicker.imageshower.BaseImagePreviewActivity;
 import com.fightcent.imagepicker.imageshower.PickedImageBeanPreviewActivity;
 import com.fightcent.imagepicker.model.ImageBean;
-import com.fightcent.imagepicker.model.event.AllImageBeanGotEvent;
+import com.fightcent.imagepicker.model.ImageBeanFactory;
 import com.fightcent.imagepicker.model.event.OnImagePickedEvent;
 import com.fightcent.imagepicker.model.event.OnImagePickerActivityDestroyEvent;
 import com.fightcent.imagepicker.util.CollectionUtil;
 import com.fightcent.imagepicker.util.ToastUtil;
 import com.fightcent.imagepicker.widget.ItemThumbnailDecoration;
+import com.fightcent.imagepicker.widget.RequestPermissionDialog;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
+
+import java.util.List;
+
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
+
+import static com.fightcent.imagepicker.ImagePicker.sAllImageBeanList;
 
 /**
  * Created by andy.guo on 2018/1/19.
  */
 
-public class ImagePickerActivity extends BaseActivity implements ImagePickerView {
+public class ImagePickerMainActivity extends BaseActivity implements ImagePickerView {
 
     private ActivityImagePickerBinding mActivityImagePickerBinding;
 
     private GridLayoutManager mGridLayoutManager;
     private ImageAdapter mImageAdapter;
+    private AlertDialog mAlertDialog;
 
     private static final String SAVE_INSTANCE_PICKED_IMAGE_BEAN_LIST
             = "SAVE_INSTANCE_PICKED_IMAGE_BEAN_LIST";
@@ -45,6 +67,12 @@ public class ImagePickerActivity extends BaseActivity implements ImagePickerView
 
     public static final String MAX_IMAGE_PICK_COUNT = "MAX_IMAGE_PICK_COUNT";
     private int mMaxImagePickCount;
+
+    private static final String ORDER_BY = MediaStore.Images.Media._ID + " DESC";
+
+    private String[] mPermissions = {
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -84,6 +112,73 @@ public class ImagePickerActivity extends BaseActivity implements ImagePickerView
         initListeners();
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (CollectionUtil.size(ImagePicker.sPickedImageBeanList) <= 0) {
+            //判断Android版本进行不同的权限处理
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                //请求权限
+                startRequestPermission();
+            } else {
+                //开始从本机获取图片列表
+                getAllImageBean();
+            }
+        }
+    }
+
+    private void startRequestPermission() {
+        ActivityCompat.requestPermissions(
+                this,
+                mPermissions,
+                CodeConstantController.CODE_REQUEST_PERMISSION_EXTERNAL_STORAGE
+        );
+    }
+
+    private void getAllImageBean() {
+        //查询图片的Uri
+        Observable.just(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        ).subscribeOn(
+                Schedulers.io()
+        ).observeOn(
+                AndroidSchedulers.mainThread()
+        ).map(
+                new Func1<Uri, List<ImageBean>>() {
+                    @Override
+                    public List<ImageBean> call(Uri uri) {
+                        Cursor cursor = getContentResolver().query(
+                                uri, null, null, null, ORDER_BY
+                        );
+                        sAllImageBeanList.clear();
+                        if (cursor != null) {
+                            while (cursor.moveToNext()) {
+                                ImageBean imageBean = ImageBeanFactory.createImageBeanByCursor(cursor);
+                                if (!CollectionUtil.isEmpty(ImagePicker.sPickedImageBeanList)
+                                        && ImagePicker.sPickedImageBeanList.contains(imageBean)) {
+                                    imageBean.setIsPicked(true);
+                                }
+                                sAllImageBeanList.add(imageBean);
+                            }
+                            cursor.close();
+                        }
+                        return sAllImageBeanList;
+                    }
+                }
+        ).subscribe(
+                new Action1<List<ImageBean>>() {
+                    @Override
+                    public void call(List<ImageBean> imageList) {
+                        if (mImageAdapter != null) {
+                            mImageAdapter.setImageList(sAllImageBeanList);
+                            mImageAdapter.notifyDataSetChanged();
+                        }
+                    }
+                }
+        );
+
+    }
+
     private void initViews() {
         //设置GridView
         mGridLayoutManager = new GridLayoutManager(this, mColumnCount);
@@ -100,7 +195,7 @@ public class ImagePickerActivity extends BaseActivity implements ImagePickerView
         );
         setPreviewButtonText(CollectionUtil.size(ImagePicker.sPickedImageBeanList));
 
-        mImageAdapter.setImageList(ImagePicker.sAllImageBeanList);
+        mImageAdapter.setImageList(sAllImageBeanList);
         mImageAdapter.notifyDataSetChanged();
 
     }
@@ -111,10 +206,10 @@ public class ImagePickerActivity extends BaseActivity implements ImagePickerView
                     @Override
                     public void onClick(View v) {
                         //清空两个静态集合
-                        ImagePicker.sAllImageBeanList.clear();
+                        sAllImageBeanList.clear();
                         ImagePicker.sPickedImageBeanList.clear();
 
-                        ImagePickerActivity.this.finish();
+                        ImagePickerMainActivity.this.finish();
                     }
                 }
         );
@@ -139,14 +234,6 @@ public class ImagePickerActivity extends BaseActivity implements ImagePickerView
                 }
         );
 
-    }
-
-    @Subscribe
-    public void onReceivedAllImageBeanGotEvent(AllImageBeanGotEvent allImageBeanGotEvent) {
-        if (mImageAdapter != null) {
-            mImageAdapter.setImageList(ImagePicker.sAllImageBeanList);
-            mImageAdapter.notifyDataSetChanged();
-        }
     }
 
     @Override
@@ -257,6 +344,46 @@ public class ImagePickerActivity extends BaseActivity implements ImagePickerView
         super.onSaveInstanceState(outState);
         //TODO
 //        outState.putSerializable(SAVE_INSTANCE_SELECTED_IMAGE_LIST, ImagePicker.mPickedImageBeanList);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(
+            int requestCode,
+            @NonNull String[] permissions,
+            @NonNull int[] grantResults
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == CodeConstantController.CODE_REQUEST_PERMISSION_EXTERNAL_STORAGE) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                    boolean b = shouldShowRequestPermissionRationale(permissions[0]);
+                    if (!b) {
+                        showMyPermissionRequestDialog();
+                    } else
+                        finish();
+                } else {
+                    getAllImageBean();
+                }
+            }
+        }
+    }
+
+    private void showMyPermissionRequestDialog() {
+        if (mAlertDialog == null) {
+            mAlertDialog = RequestPermissionDialog.makeDialog(
+                    this,
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    },
+                    R.string.request_permission,
+                    R.string.request_permission_read_external_storage
+            );
+        } else if (!mAlertDialog.isShowing()) {
+            mAlertDialog.show();
+        }
     }
 
 }

@@ -9,5 +9,8 @@
     <string name="preview_size">Preview(%1$d)</string>
     <string name="can_not_pick_more_image">Can\'t pick more image</string>
     <string name="select">Select</string>
-
+    <string name="go_to_set">Go to set</string>
+    <string name="cancel">Cancel</string>
+    <string name="request_permission">Request permission</string>
+    <string name="request_permission_read_external_storage">Please allow app to access read external storage in "Settings".</string>
 </resources>

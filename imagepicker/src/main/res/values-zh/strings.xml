@@ -9,4 +9,8 @@
     <string name="preview_size">预览(%1$d)</string>
     <string name="can_not_pick_more_image">已达到最大选择张数</string>
     <string name="select">选择</string>
+    <string name="go_to_set">去设置</string>
+    <string name="cancel">取消</string>
+    <string name="request_permission">请求权限</string>
+    <string name="request_permission_read_external_storage">请在手机的“设置”中，允许应用读写手机存储。</string>
 </resources>

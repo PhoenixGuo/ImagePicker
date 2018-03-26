@@ -2,27 +2,14 @@ package com.fightcent.imagepicker;
 
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
-import android.provider.MediaStore;
 
-import com.fightcent.imagepicker.imagepickerview.ImagePickerActivity;
+import com.fightcent.imagepicker.imagepickerview.ImagePickerMainActivity;
 import com.fightcent.imagepicker.model.ImageBean;
-import com.fightcent.imagepicker.model.ImageBeanFactory;
-import com.fightcent.imagepicker.model.event.AllImageBeanGotEvent;
-import com.fightcent.imagepicker.util.CollectionUtil;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
-
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by andy.guo on 2018/2/2.
@@ -64,8 +51,6 @@ public class ImagePicker implements Serializable {
     //TODO 数据结构替换成LinkedHashSet
     public static ArrayList<ImageBean> sAllImageBeanList = new ArrayList<>();
     public static ArrayList<ImageBean> sPickedImageBeanList = new ArrayList<>();
-
-    private static final String ORDER_BY = MediaStore.Images.Media._ID + " DESC";
 
     private ImagePicker() {
 
@@ -151,55 +136,11 @@ public class ImagePicker implements Serializable {
             EventBus.getDefault().register(mOnImagePickedListenerWrapper);
         }
 
-        //开始从本机获取图片列表
-        getAllImageBean();
-
-        Intent intent = new Intent(mContext, ImagePickerActivity.class);
-        intent.putExtra(ImagePickerActivity.COLUMN_COUNT, mColumnCount);
-        intent.putExtra(ImagePickerActivity.MAX_IMAGE_PICK_COUNT, mMaxImagePickCount);
+        Intent intent = new Intent(mContext, ImagePickerMainActivity.class);
+        intent.putExtra(ImagePickerMainActivity.COLUMN_COUNT, mColumnCount);
+        intent.putExtra(ImagePickerMainActivity.MAX_IMAGE_PICK_COUNT, mMaxImagePickCount);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mContext.startActivity(intent);
-    }
-
-    private void getAllImageBean() {
-        //查询图片的Uri
-        Observable.just(
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-        ).subscribeOn(
-                Schedulers.io()
-        ).observeOn(
-                AndroidSchedulers.mainThread()
-        ).map(
-                new Func1<Uri, List<ImageBean>>() {
-                    @Override
-                    public List<ImageBean> call(Uri uri) {
-                        Cursor cursor = mContext.getContentResolver().query(
-                                uri, null, null, null, ORDER_BY
-                        );
-                        sAllImageBeanList.clear();
-                        if (cursor != null) {
-                            while (cursor.moveToNext()) {
-                                ImageBean imageBean = ImageBeanFactory.createImageBeanByCursor(cursor);
-                                if (!CollectionUtil.isEmpty(ImagePicker.sPickedImageBeanList)
-                                        && ImagePicker.sPickedImageBeanList.contains(imageBean)) {
-                                    imageBean.setIsPicked(true);
-                                }
-                                sAllImageBeanList.add(imageBean);
-                            }
-                            cursor.close();
-                        }
-                        return sAllImageBeanList;
-                    }
-                }
-        ).subscribe(
-                new Action1<List<ImageBean>>() {
-                    @Override
-                    public void call(List<ImageBean> imageList) {
-                        EventBus.getDefault().post(new AllImageBeanGotEvent());
-                    }
-                }
-        );
-
     }
 
 }

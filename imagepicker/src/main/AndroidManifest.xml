@@ -15,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".imagepickerview.ImagePickerActivity"
+            android:name=".imagepickerview.ImagePickerMainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
             android:screenOrientation="portrait" />
         <activity
