@@ -59,6 +59,7 @@ public class PositiveNegativeDialog {
             }
         });
         if (!activity.isFinishing()) {
+            //TODO 不建议直接在该方法中show
             alertDialog = builder.show();
         }
         return alertDialog;
@@ -77,7 +78,7 @@ public class PositiveNegativeDialog {
         AlertDialog alertDialog = null;
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setCancelable(isCancelable);
-        if (titleRes >0){
+        if (titleRes > 0) {
             builder.setTitle(titleRes);
         }
         builder.setMessage(message);
@@ -90,6 +91,7 @@ public class PositiveNegativeDialog {
             }
         });
         if (!activity.isFinishing()) {
+            //TODO 不建议直接在该方法中show
             alertDialog = builder.show();
         }
         return alertDialog;
@@ -110,14 +112,14 @@ public class PositiveNegativeDialog {
         AlertDialog alertDialog = null;
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setCancelable(isCancelable);
-        if (titleRes >0){
+        if (titleRes > 0) {
             builder.setTitle(titleRes);
         }
 
         builder.setMessage(message);
         builder.setPositiveButton(positiveRes, positiveListener);
         builder.setNegativeButton(negativeRes, negativeListener);
-        builder.setNeutralButton(neutral,neutralListener);
+        builder.setNeutralButton(neutral, neutralListener);
         builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
@@ -125,6 +127,7 @@ public class PositiveNegativeDialog {
             }
         });
         if (!activity.isFinishing()) {
+            //TODO 不建议直接在该方法中show
             alertDialog = builder.show();
         }
         return alertDialog;
@@ -174,6 +177,7 @@ public class PositiveNegativeDialog {
             }
         });
         if (!activity.isFinishing()) {
+            //TODO 不建议直接在该方法中show
             alertDialog = builder.show();
         }
         return alertDialog;

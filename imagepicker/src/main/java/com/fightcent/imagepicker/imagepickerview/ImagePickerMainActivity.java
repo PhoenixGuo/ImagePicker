@@ -45,7 +45,6 @@ import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
-import static com.fightcent.imagepicker.ImagePicker.sAllImageBeanList;
 
 /**
  * Created by andy.guo on 2018/1/19.
@@ -115,6 +114,7 @@ public class ImagePickerMainActivity extends BaseActivity implements ImagePicker
     @Override
     protected void onStart() {
         super.onStart();
+        //TODO 这部分代码的生命周期问题
         if (CollectionUtil.size(ImagePicker.sPickedImageBeanList) <= 0) {
             //判断Android版本进行不同的权限处理
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -150,7 +150,7 @@ public class ImagePickerMainActivity extends BaseActivity implements ImagePicker
                         Cursor cursor = getContentResolver().query(
                                 uri, null, null, null, ORDER_BY
                         );
-                        sAllImageBeanList.clear();
+                        ImagePicker.sAllImageBeanList.clear();
                         if (cursor != null) {
                             while (cursor.moveToNext()) {
                                 ImageBean imageBean = ImageBeanFactory.createImageBeanByCursor(cursor);
@@ -158,11 +158,11 @@ public class ImagePickerMainActivity extends BaseActivity implements ImagePicker
                                         && ImagePicker.sPickedImageBeanList.contains(imageBean)) {
                                     imageBean.setIsPicked(true);
                                 }
-                                sAllImageBeanList.add(imageBean);
+                                ImagePicker.sAllImageBeanList.add(imageBean);
                             }
                             cursor.close();
                         }
-                        return sAllImageBeanList;
+                        return ImagePicker.sAllImageBeanList;
                     }
                 }
         ).subscribe(
@@ -170,7 +170,7 @@ public class ImagePickerMainActivity extends BaseActivity implements ImagePicker
                     @Override
                     public void call(List<ImageBean> imageList) {
                         if (mImageAdapter != null) {
-                            mImageAdapter.setImageList(sAllImageBeanList);
+                            mImageAdapter.setImageList(ImagePicker.sAllImageBeanList);
                             mImageAdapter.notifyDataSetChanged();
                         }
                     }
@@ -195,7 +195,7 @@ public class ImagePickerMainActivity extends BaseActivity implements ImagePicker
         );
         setPreviewButtonText(CollectionUtil.size(ImagePicker.sPickedImageBeanList));
 
-        mImageAdapter.setImageList(sAllImageBeanList);
+        mImageAdapter.setImageList(ImagePicker.sAllImageBeanList);
         mImageAdapter.notifyDataSetChanged();
 
     }
@@ -205,10 +205,6 @@ public class ImagePickerMainActivity extends BaseActivity implements ImagePicker
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        //清空两个静态集合
-                        sAllImageBeanList.clear();
-                        ImagePicker.sPickedImageBeanList.clear();
-
                         ImagePickerMainActivity.this.finish();
                     }
                 }
@@ -337,6 +333,9 @@ public class ImagePickerMainActivity extends BaseActivity implements ImagePicker
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().post(new OnImagePickerActivityDestroyEvent());
+        //清空两个静态集合
+        ImagePicker.sAllImageBeanList.clear();
+        ImagePicker.sPickedImageBeanList.clear();
     }
 
     @Override
