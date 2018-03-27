@@ -37,7 +37,7 @@ public class ImagePicker implements Serializable {
     //选中照片的回显（放弃实现该功能，微信允许选取多张图片）
     //点击反馈水波纹
     //图片手势缩放
-    //图片编辑
+    //图片编辑（旋转，裁剪）
     //相机
     //小图预览
     //加载loading
