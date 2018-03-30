@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.bumptech.glide.Glide;
 import com.fightcent.imagepicker.R;
 import com.fightcent.imagepicker.databinding.FragmentImageShowerBinding;
 import com.fightcent.imagepicker.model.ImageBean;
@@ -68,11 +67,9 @@ public class ImageShowerFragment extends Fragment {
 
     private void initViews() {
         if (mImageBean != null) {
-            Glide.with(getContext())
-                    .load(mImageBean.getContentUriString())
-                    .asBitmap()
-                    .thumbnail(0.1f)
-                    .into(mFragmentImageShowerBinding.iv);
+            mFragmentImageShowerBinding.iv.setImageByUri(
+                    mImageBean.getContentUriString()
+            );
         }
     }
 
