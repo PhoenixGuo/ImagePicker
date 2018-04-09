@@ -354,6 +354,9 @@ public class ImagePickerMainActivity extends BaseActivity implements ImagePicker
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == CodeConstantController.CODE_REQUEST_PERMISSION_EXTERNAL_STORAGE) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (grantResults.length <= 0) {
+                    return;
+                }
                 if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                     boolean b = shouldShowRequestPermissionRationale(permissions[0]);
                     if (!b) {
